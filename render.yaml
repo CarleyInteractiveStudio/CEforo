@@ -1,0 +1,39 @@
+# Este archivo le dice a Render cómo desplegar tu aplicación Django.
+# Visita https://render.com/docs/yaml-spec para más detalles.
+
+services:
+  # Un servicio web para ejecutar la aplicación Django con Gunicorn
+  - type: web
+    name: game-forum-app
+    env: python
+    region: frankfurt # Puedes cambiar esto a la región más cercana a ti (e.g., oregon)
+    plan: free # Plan gratuito de Render
+
+    # Comandos que se ejecutan en cada despliegue:
+    # 1. Instala las dependencias.
+    # 2. Recolecta los archivos estáticos para que Whitenoise los sirva.
+    # 3. Aplica las migraciones a la base de datos.
+    buildCommand: |
+      pip install -r requirements.txt
+      python game_forum/manage.py collectstatic --no-input
+      python game_forum/manage.py migrate
+
+    # Comando para iniciar la aplicación:
+    startCommand: "gunicorn game_forum.game_forum.wsgi"
+
+    # Variables de entorno para la aplicación
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: forum-db # El nombre de nuestro servicio de base de datos
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true # Render generará una clave segura automáticamente
+      - key: DEVELOPMENT
+        value: "False" # Asegura que DEBUG esté desactivado en producción
+
+  # Una base de datos PostgreSQL en el plan gratuito de Render
+  - type: psql
+    name: forum-db
+    region: frankfurt
+    plan: free
