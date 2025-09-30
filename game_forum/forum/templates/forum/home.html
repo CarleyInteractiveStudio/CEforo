@@ -1,0 +1,40 @@
+{% extends 'forum/base.html' %}
+
+{% block title %}Inicio del Foro{% endblock %}
+
+{% block content %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="display-6">Bienvenido al Foro de tu Juego</h1>
+            <p class="lead">Aquí puedes discutir sobre el juego, reportar bugs, sugerir ideas y ayudar a otros jugadores. ¡Únete a la comunidad!</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Hilos Recientes</h4>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for thread in recent_threads %}
+                <a href="{% url 'forum:thread_detail' thread.id %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <h5 class="mb-1">{{ thread.title }}</h5>
+                        <div>
+                            {% if thread.thread_type == 'AYUDA' %}
+                                <span class="badge bg-danger">Ayuda</span>
+                            {% else %}
+                                <span class="badge bg-success">Debate</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="mb-1">En: <span class="badge bg-dark">{{ thread.category.name }}</span></p>
+                    <small class="text-muted">Creado por {{ thread.created_by.username }} el {{ thread.created_at|date:"d/m/Y" }}</small>
+                </a>
+            {% empty %}
+                <div class="list-group-item">
+                    <p class="mb-1">No hay hilos todavía. ¡Sé el primero en crear uno!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

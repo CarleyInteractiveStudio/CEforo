@@ -1,0 +1,66 @@
+{% extends 'forum/base.html' %}
+
+{% block title %}Crear Nuevo Hilo en {{ category.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Crear un nuevo hilo en "{{ category.name }}"</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ thread_form.title.id_for_label }}" class="form-label">{{ thread_form.title.label }}</label>
+                        {{ thread_form.title }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">{{ thread_form.thread_type.label }}</label>
+                        <div id="id_thread_type" class="d-flex gap-3">
+                            {% for radio in thread_form.thread_type %}
+                            <div class="form-check">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ post_form.content.id_for_label }}" class="form-label">{{ post_form.content.label }}</label>
+                        {{ post_form.content }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ post_form.images.id_for_label }}" class="form-label">{{ post_form.images.label }}</label>
+                        {{ post_form.images }}
+                        {% if post_form.images.errors %}
+                            <div class="alert alert-danger mt-2">{{ post_form.images.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Crear Hilo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #id_title, #id_content {
+        width: 100%; padding: .375rem .75rem; font-size: 1rem;
+        color: var(--bs-body-color); background-color: #2a2a2a;
+        border: 1px solid #444; border-radius: var(--bs-border-radius);
+    }
+    #id_title:focus, #id_content:focus {
+        border-color: #bb86fc; outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(187, 134, 252, 0.25);
+    }
+</style>
+{% endblock %}
